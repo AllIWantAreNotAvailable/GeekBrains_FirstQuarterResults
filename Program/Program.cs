@@ -41,20 +41,25 @@ string[] ReturnStringsLessEqualArgs((string[] array, int samplingCondition) args
 
 int GetStringLengthForSelection()
 {
-    int stringLength;
-    Console.Write("Укажите длину строки для отбора значений:\n>>> ");
-    bool flag = int.TryParse(Console.ReadLine(), out stringLength);
-    if (flag)
+    int stringLength = 3;
+    Console.Write("Желаете установить длину отбора строк?\n"
+                + "(нажмите Y, если \"Да\" или любую кнопку, если \"Нет\")\n"
+                + ">>> ");
+    if (Console.ReadKey().Key == ConsoleKey.Y)
     {
-        return stringLength;
+        Console.WriteLine();
+        Console.Write("Укажите длину строки для отбора значений:\n>>> ");
+        bool flag = int.TryParse(Console.ReadLine(), out stringLength);
+        if (!flag)
+        {
+            stringLength = 3; // Метод TryParse() "обнулит" значение переменной, если 
+                              // ему не удастся пропарсить строку.
+                              // Восстанавливаем инициализированное ранее значение. 
+            Console.WriteLine("Не удалось преобразовать строку к числу, "
+                            + $"будет использовано значение по умолчанию -> {stringLength}");
+        }
     }
-    else
-    {
-        stringLength = 3;
-        Console.WriteLine("Не удалось преобразовать строку к числу, "
-                        + $"будет использовано значение по умолчанию -> {stringLength}");
-        return stringLength;
-    }
+    return stringLength;
 }
 
 
