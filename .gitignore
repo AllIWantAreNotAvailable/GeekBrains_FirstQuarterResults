@@ -406,9 +406,9 @@ core-plugins.json
 hotkeys.json
 workspace.json
 
-# Multimedia files
-*.pdf
-*.mp4
+# Draw.io
+*.drawio.bkp
+*.drawio
 
 #
 .DS_Store
