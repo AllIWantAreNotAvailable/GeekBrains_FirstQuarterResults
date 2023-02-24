@@ -12,6 +12,16 @@
 */
 
 
+void ShowResult((string[] usersArray, string[] resultArray) args)
+{
+    string usersArray = "{" + "\"" + String.Join("\", \"", args.usersArray) + "\"" + "}";
+    string resultArray = 0 < args.resultArray.Length
+                       ? "{" + "\"" + String.Join("\", \"", args.resultArray) + "\"" + "}"
+                       : "{}";
+    Console.WriteLine(usersArray + " –> " + resultArray);
+}
+
+
 string[] ReturnStringsLessEqualArgs((string[] array, int samplingCondition) args)
 {
     string[] result = new string[0];
@@ -26,6 +36,25 @@ string[] ReturnStringsLessEqualArgs((string[] array, int samplingCondition) args
         }
     }
     return result;
+}
+
+
+int GetStringLengthForSelection()
+{
+    int stringLength;
+    Console.Write("Укажите длину строки для отбора значений:\n>>> ");
+    bool flag = int.TryParse(Console.ReadLine(), out stringLength);
+    if (flag)
+    {
+        return stringLength;
+    }
+    else
+    {
+        stringLength = 3;
+        Console.WriteLine("Не удалось преобразовать строку к числу, "
+                        + $"будет использовано значение по умолчанию -> {stringLength}");
+        return stringLength;
+    }
 }
 
 
@@ -55,42 +84,64 @@ string[] GetRandomDefaultArray()
 }
 
 
-void ShowResult((string[] usersArray, string[] resultArray) args)
+string[] GetUsersInputedArray()
 {
-    string usersArray = "{" + "\"" + String.Join("\", \"", args.usersArray) + "\"" + "}";
-    string resultArray = 0 < args.resultArray.Length
-                       ? "{" + "\"" + String.Join("\", \"", args.resultArray) + "\"" + "}"
-                       : "{}";
-    Console.WriteLine(usersArray + " –> " + resultArray);
+    string[] usersArray = new string[0];
+    bool stringChecker = true;
+    int stringCount = 0;
+    bool nextString = true;
+
+    while (nextString)
+    {
+        System.Console.Write("Введите строку:\n"
+                            + $"(было добавлено {stringCount} строк)\n"
+                            + ">>> ");
+        var usersString = Console.ReadLine()!;
+        stringChecker = String.IsNullOrWhiteSpace(usersString);
+        if (!stringChecker)
+        {
+            Array.Resize(ref usersArray, usersArray.Length + 1);
+            usersArray[stringCount++] = usersString.Trim();
+        }
+        Console.Write("q – прервать ввод строк.\n"
+                    + "любая кнопка – продолжить ввод.\n"
+                    + ">>> ");
+        if (Console.ReadKey().Key == ConsoleKey.Q) nextString = false;
+        Console.WriteLine();
+    }
+    return usersArray;
 }
 
 
-int GetStringLengthForSelection()
+bool ReadAnArray()
 {
-    int stringLength;
-    Console.Write("Укажите длину строки для отбора значений:\n>>> ");
-    bool flag = int.TryParse(Console.ReadLine(), out stringLength);
-    if (flag)
+    Console.Write("Желаете задать свой массив строк?\n"
+                + "(нажмите Y, если \"Да\" или любую кнопку, если \"Нет\")\n"
+                + ">>> ");
+    if (Console.ReadKey().Key == ConsoleKey.Y)
     {
-        return stringLength;
+        Console.WriteLine();
+        return true;
     }
     else
     {
-        stringLength = 3;
-        Console.WriteLine("Не удалось преобразовать строку к числу, "
-                        + $"будет использовано значение по умолчанию -> {stringLength}");
-        return stringLength;
+        Console.WriteLine();
+        return false;
     }
 }
 
 
 void Main()
 {
-    string[] sourceArray = GetRandomDefaultArray();
+    bool readUsersInput = ReadAnArray();
+    string[] sourceArray = readUsersInput
+                         ? GetUsersInputedArray()
+                         : GetRandomDefaultArray();
     int stringLength = GetStringLengthForSelection();
     string[] resultingArray = ReturnStringsLessEqualArgs((sourceArray, stringLength));
     ShowResult((usersArray: sourceArray,
                 resultArray: resultingArray));
 }
+
 
 Main();
